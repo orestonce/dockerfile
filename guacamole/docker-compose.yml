@@ -1,0 +1,32 @@
+version: "3.4"
+services:
+    guacd:
+      restart: always
+      build:
+        context: ./guacd
+      environment:
+       - GUACD_LOG_LEVEL=debug
+      volumes:
+       - ./guacd/data:/data   
+    guacamole:
+      restart: always
+      image: guacamole/guacamole
+      environment:
+       - GUACD_HOSTNAME=guacd
+       - GUACD_PORT=4822
+       - MYSQL_HOSTNAME=mysql
+       - MYSQL_PORT=3306
+       - MYSQL_DATABASE=guacamole
+       - MYSQL_USER=root
+       - MYSQL_PASSWORD=password
+      ports:
+       - 8080:8080   
+    mysql:
+      restart: always
+      build:
+        context: ./mysql
+        target: mysql_db
+      environment:
+       - MYSQL_ROOT_PASSWORD=password
+      volumes:
+        - ./mysql/data/:/var/lib/mysql/
